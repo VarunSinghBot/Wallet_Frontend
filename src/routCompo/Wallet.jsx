@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import Navbar from '../components/Navbar';
 
 import {
     AddSolWallet, 
@@ -10,7 +11,7 @@ import {
 
 function Wallet() {
 
-  const [wallet,setWallet] = useState("");
+  const [wallet,setWallet] = useState("AddSolWallet");
 
   const walletComponents = {
     AddSolWallet: AddSolWallet,
@@ -24,6 +25,7 @@ function Wallet() {
   return (
     <>
       <Container>
+        <Navbar/>
         <WalletRender>
 
           <SelectTag>
@@ -49,8 +51,9 @@ const Container = styled.div`
   width: 100dvw;
   background-color: rgb(20,20,20);
   display: flex;
-  justify-content: center;
-  /* align-items: center; */
+  /* justify-content: center; */
+  flex-direction:column;
+  align-items: center;
 `;
 
 const SelectTag = styled.div`

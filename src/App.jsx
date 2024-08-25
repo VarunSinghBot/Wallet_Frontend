@@ -22,6 +22,7 @@ function App() {
             {/* Login Page */}
             < Route path="/login" element={<Login />} />
 
+            {/* Signup Page */}
             <Route path="/signup" element={<Signup />}/>
 
           </Routes>
@@ -33,6 +34,7 @@ function App() {
 
 const Container = styled.div`
   overflow: hidden;
+  position: relative;
 `;
 
 export default App

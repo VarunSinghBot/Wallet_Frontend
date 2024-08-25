@@ -68,7 +68,7 @@ const Container = styled.div`
     width: 120px;
     padding: 3px 6px;
     border-radius: 12px;
-    background-color: rgb(20,20,20);
+    background-color: rgb(88, 234, 68);
     color: #d5d5d5;
     font-size: 13.5px;
 
