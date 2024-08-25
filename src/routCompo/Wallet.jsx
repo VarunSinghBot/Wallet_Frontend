@@ -26,14 +26,14 @@ function Wallet() {
       <Container>
         <WalletRender>
 
-          <label htmlFor="walletSelect">Choose Wallet:</label>
+          <SelectTag>
+          <label htmlFor="walletSelect" className='text-slate-50 '>Choose Wallet:</label>
 
           <select id="walletSelect" onChange={(e) => setWallet(e.target.value)}>
-            <option value="">Select Wallet</option>
-            <option value="AddSolWallet">Solana Wallet</option>
+            <option value="AddSolWallet" selected>Solana Wallet</option>
             <option value="AddEthWallet">Ethereum Wallet</option>
           </select>
-
+          </SelectTag>
 
           {SelectedWalletComponent && <SelectedWalletComponent />}
         </WalletRender>
@@ -51,6 +51,39 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   /* align-items: center; */
+`;
+
+const SelectTag = styled.div`
+  margin-top: 30px;
+  height: auto;
+  width: 100%;
+  /* border: 1px solid red; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: left;
+
+  label{
+    width: 80%;
+    padding:7px;
+    font-size: large;
+  }
+  select{
+    height: 35px;
+    border-radius: 12px;
+    padding-inline:15px;
+    width: 80%;
+    cursor: pointer;
+    color: aliceblue;
+    background-color: rgb(25,25,25);
+    border: 1.8px solid #9c9c9c;
+
+    
+  }
+  option{
+    cursor: pointer;
+  }
 `;
 
 const WalletRender = styled.div`
