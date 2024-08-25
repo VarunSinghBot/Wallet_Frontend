@@ -32,7 +32,7 @@ function Wallet() {
           <label htmlFor="walletSelect" className='text-slate-50 '>Choose Wallet:</label>
 
           <select id="walletSelect" onChange={(e) => setWallet(e.target.value)}>
-            <option value="AddSolWallet" selected>Solana Wallet</option>
+            <option value="AddSolWallet" defaultValue>Solana Wallet</option>
             <option value="AddEthWallet">Ethereum Wallet</option>
           </select>
           </SelectTag>

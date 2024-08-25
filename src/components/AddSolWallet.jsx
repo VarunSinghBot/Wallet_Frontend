@@ -39,8 +39,8 @@ function AddSolWallet() {
             Add wallet
         </button>
         <KeyConatiner>
-            {publicKeys.map(p => 
-            <KeyBox>
+            {publicKeys.map((p, index) => 
+            <KeyBox key={index}>
                 {p.toBase58()}
             </KeyBox>
             )}
