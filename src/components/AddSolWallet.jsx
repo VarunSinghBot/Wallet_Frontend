@@ -63,17 +63,18 @@ const Container = styled.div`
 
   button{
     margin-top: 40px;
-    border: 2px solid #d5d5d5;
+    border: 2px solid #b5f795;
     height: 40px;
     width: 120px;
     padding: 3px 6px;
     border-radius: 12px;
     background-color: rgb(88, 234, 68);
-    color: #d5d5d5;
+    color: #3a3a3a;
     font-size: 13.5px;
 
       &:hover{
-        background-color: rgb(30, 30, 30)
+        background-color: rgba(88, 234, 68,.5);
+        color: #fff;
       }
     }
 `;
