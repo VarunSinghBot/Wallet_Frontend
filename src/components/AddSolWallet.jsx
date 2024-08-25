@@ -36,7 +36,7 @@ function AddSolWallet() {
     <>
       <Container>
         <button onClick={onClickFunction}>
-            Add wallet
+            Add SOL wallet
         </button>
         <KeyConatiner>
             {publicKeys.map((p, index) => 

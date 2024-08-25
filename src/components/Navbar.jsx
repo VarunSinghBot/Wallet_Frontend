@@ -10,7 +10,7 @@ function Navbar() {
   return (
     <>
       <Container>
-        <h1>Web Wallet ~ By ~ Varun</h1>
+        <h1>Web Wallet ~ Developed by ~ Varun</h1>
 
         <div>
           <h1>Your Name</h1>

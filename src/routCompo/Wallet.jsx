@@ -92,7 +92,7 @@ const SelectTag = styled.div`
 const WalletRender = styled.div`
   height: 100%;
   width: 55%;
-  border: 2px solid #ffffff;
+  /* border: 2px solid #ffffff; */
 `;
 
 
