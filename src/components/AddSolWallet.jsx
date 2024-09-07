@@ -9,12 +9,6 @@ import { genM } from "../util/mFunctions.js"
 import styled from "styled-components"
 
 function AddSolWallet() {
-
-//   useEffect((setMnemonic)=>{
-//     setMnemonic(genM());
-//   },[]);
-
-    
   
   const [mnemonic, setMnemonic] = useState("");
   const [currentIndex,setCurrentIndex] = useState(0);
