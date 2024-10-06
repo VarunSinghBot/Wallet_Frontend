@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { genM } from '../util/mFunctions';
 import { mnemonicToSeed } from "bip39";
 import { Wallet, HDNodeWallet } from "ethers";
+import subWallet from '../ui/subWallet';
 
 function addEthWallet() {
 
@@ -12,6 +13,7 @@ function addEthWallet() {
 
   const onClickFunction = async () => {
     setMnemonic(genM());
+    
     const seed = await mnemonicToSeed(mnemonic);
     const derivationPath = `m/44'/60'/${currentIndex}'/0'`;
     const hdNode = HDNodeWallet.fromSeed(seed);
@@ -34,6 +36,7 @@ function addEthWallet() {
             {addresses.map((p, index) => 
             <KeyBox key={index}>
                 {p}
+                {/* <subWallet publicKey={p}/> */}
             </KeyBox>
             )}
         </KeyConatiner>
@@ -83,7 +86,8 @@ const KeyConatiner = styled.div`
 `;
 
 const KeyBox = styled.div`
-  height: 40px;
+  height: auto;
+  min-height: 40px;
   width: 100%;
   text-align: left;
   display: flex;

@@ -6,24 +6,33 @@ import {
   Wallet,
   Login,
   Signup,
-} from "./routCompo/rIndex"
+  SolWallet,
+  EthWallet,
+} from "./routeComponents/rIndex"
+import LandingPage from './routeComponents/LandingPage';
 
 function App() {
 
   return (
     <>
+     
+      
       <Router>
         <Container>
           <Routes>
 
             {/* Landing Page */}
-            < Route path="/" element={<Wallet />} />
+            < Route path="/" element={<LandingPage />} />
 
             {/* Login Page */}
             < Route path="/login" element={<Login />} />
 
             {/* Signup Page */}
             <Route path="/signup" element={<Signup />}/>
+
+            <Route path="/ethWallet" element={<EthWallet />}/>
+
+            <Route path="/solWallet" element={<SolWallet />}/>
 
           </Routes>
         </Container>
