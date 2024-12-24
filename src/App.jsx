@@ -8,15 +8,13 @@ import {
   Signup,
   SolWallet,
   EthWallet,
-} from "./routeComponents/rIndex"
-import LandingPage from './routeComponents/LandingPage';
+} from "./components/rIndex"
+import LandingPage from './components/LandingPage';
 
 function App() {
 
   return (
     <>
-     
-      
       <Router>
         <Container>
           <Routes>

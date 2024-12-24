@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -6,26 +6,51 @@ import WalletBox from "./WalletBox.jsx"
 import Navbar from './Navbar.jsx';
 import { Wallet, HDNodeWallet } from "ethers";
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { ethers } from "ethers";
 
 
 function EthWallet() {
 
   
+  
   const [currentIndex,setCurrentIndex] = useState(0);
   const [publicKeys,setPublicKeys] = useState([]);
+  const [privateKeys, setPrivateKeys] = useState([]);
+  const [deletedWallets, setDeletedWallets] = useState([]);
+
+  const [dropdownToggle, setDropdownToggle] = useState(true)
+  
 
   const seed = useSelector(state => state.util.seed);
   console.log("solWallet S  --->",seed);
   const mnemonic = useSelector(state => state.util.mnemonic);
   console.log("solWallet M  --->",mnemonic);
 
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(!mnemonic){
+      navigate("/")
+    }
+  },[mnemonic])
 
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(mnemonic);
-      toast.success("Text copied to clipboard!",{ className: 'toast-success' });
+      toast.success("Text copied to clipboard!",{
+        style: {
+        border: '1px solid #ffffff',
+        padding: '16px',
+        color: '#000000',
+      },
+      iconTheme: {
+        primary: '#000000',
+        secondary: '#FFFAEE',
+      }
+    });
     } catch (err) {
-      toast.error("Couldn't copy text", { className: 'toast-error' });
+      toast.error("Couldn't copy text");
       console.error("Failed to copy: ", err);
     }
   };
@@ -34,21 +59,96 @@ function EthWallet() {
     // Split the string by spaces and return the resulting array
     return inputString.split(' ');
   }
-  // Example usage
+  
   const resultArray = splitStringToArray(mnemonic);
   console.log(resultArray)
 
 
-  const onClickAddWalletFunction = async () => {
-    const derivationPath = `m/44'/60'/${currentIndex}'/0'`;
-    const hdNode = HDNodeWallet.fromSeed(seed);
-    const child = hdNode.derivePath(derivationPath);
-    const privateKey = child.privateKey;
-    const wallet = new Wallet(privateKey);
-    setCurrentIndex(currentIndex + 1);
-    setAddresses([...addresses, wallet.address]);
-  }
+  // const onClickAddWalletFunction = async () => {
+  //   const derivationPath = `m/44'/60'/${currentIndex}'/0'`;
+  //   const hdNode = HDNodeWallet.fromSeed(seed);
+  //   const child = hdNode.derivePath(derivationPath);
+  //   const privateKey = child.privateKey;
+  //   const wallet = new Wallet(privateKey);
+  //   setCurrentIndex(currentIndex + 1);
+  //   setAddresses([...addresses, wallet.address]);
+  // }
 
+  const onClickAddEthWalletFunction = async () => {
+    try {
+      if (deletedWallets.length > 0) {
+        // Restore a previously deleted wallet
+        const restoredWallet = deletedWallets[deletedWallets.length - 1];
+        setPublicKeys((prevKeys) => [...prevKeys, restoredWallet.address]);
+        setPrivateKeys((prevKeys) => [...prevKeys, restoredWallet.privateKey]);
+  
+        toast.success(`Restored Wallet successfully!`, {
+          style: {
+            border: "1px solid #ffffff",
+            padding: "16px",
+            color: "#000000",
+          },
+          iconTheme: {
+            primary: "#000000",
+            secondary: "#FFFAEE",
+          },
+        });
+  
+        // Remove the restored wallet from deleted wallets
+        setDeletedWallets((prev) => prev.slice(0, -1));
+      } else {
+        // Create a new Ethereum wallet
+        const wallet = ethers.Wallet.createRandom();
+  
+        setPublicKeys((prevKeys) => [...prevKeys, wallet.address]);
+        setPrivateKeys((prevKeys) => [...prevKeys, wallet.privateKey]);
+  
+        toast.success("Added new Wallet", {
+          style: {
+            border: "1px solid #ffffff",
+            padding: "16px",
+            color: "#000000",
+          },
+          iconTheme: {
+            primary: "#000000",
+            secondary: "#FFFAEE",
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error adding wallet:", error);
+      toast.error("Failed to add wallet");
+    }
+  };
+
+  const handleDeleteEthWallet = (walletNo) => {
+    const publicKeyToDelete = publicKeys[walletNo - 1];
+    const privateKeyToDelete = privateKeys[walletNo - 1];
+  
+    // Store the deleted wallet's address and private key
+    setDeletedWallets((prev) => [
+      ...prev,
+      { address: publicKeyToDelete, privateKey: privateKeyToDelete },
+    ]);
+  
+    // Remove the wallet from the current list
+    setPublicKeys((prevKeys) => prevKeys.filter((_, index) => index !== walletNo - 1));
+    setPrivateKeys((prevKeys) => prevKeys.filter((_, index) => index !== walletNo - 1));
+  
+    // Show a success toast notification
+    toast.success("Wallet deleted successfully!", {
+      style: {
+        border: "1px solid #ffffff",
+        padding: "16px",
+        color: "#000000",
+      },
+      iconTheme: {
+        primary: "#ff0000",
+        secondary: "#ffffff",
+      },
+    });
+  };
+  
 
 
   return (
@@ -58,9 +158,9 @@ function EthWallet() {
       <Navbar/>
       <ToastContainer position="bottom-right" autoClose={1600} />
       <TopContainer>
-      <Top>
+      <Top onClick={()=>setDropdownToggle(!dropdownToggle)}>
         <div>
-          Copy your Mnemonics 
+          Copy your Mnemonics
         </div>
         <div>
           <span className='arrow'>
@@ -79,20 +179,22 @@ function EthWallet() {
           </span>
         </div>
       </Top>
-      
-      <Mnemonic>
-      {
-          resultArray.map((value, index) => (
-            <Item 
-              key={index}
-              onClick={() => copyToClipboard()}
-            >
-              {value}
-            </Item>
-          ))
-        }
-      </Mnemonic>
-
+      { dropdownToggle ? null :
+        <>
+          <Mnemonic>
+            {
+              resultArray.map((value, index) => (
+                <Item 
+                  key={index}
+                  onClick={() => copyToClipboard()}
+                >
+                  {value}
+                </Item>
+              ))
+            }
+          </Mnemonic>
+        </>
+      }
       <p onClick={()=>copyToClipboard()}>
         <span>
           <img src="/copy-icon.svg" alt="<--Copy Icon-->" width="16" height="16" />
@@ -100,7 +202,6 @@ function EthWallet() {
         Click to copy
       </p>
       </TopContainer>
-
 
       <Heading>
         <h1>
@@ -112,7 +213,7 @@ function EthWallet() {
             id='addWallet' 
             onClick={(e)=>{
               e.preventDefault();
-              onClickAddWalletFunction();
+              onClickAddEthWalletFunction();
             }}
           >
             Add Wallet
@@ -120,8 +221,22 @@ function EthWallet() {
           <button 
             id='delWallets'
             onClick={()=>{
-              setPublicKeys([]); // Clear all wallets
+              // Clear all wallets
+              setPublicKeys([]); 
+              setPrivateKeys([]); 
+              setDeletedWallets([]);
               setCurrentIndex(0); // Reset current index
+              toast.success(`All wallets cleared!`,{
+                  style: {
+                  border: '1px solid #ffffff',
+                  padding: '16px',
+                  color: '#000000',
+                },
+                iconTheme: {
+                  primary: '#ff0000',
+                  secondary: '#ffffff',
+                }
+              });
             }}
           >
             Clear Wallets
@@ -129,7 +244,7 @@ function EthWallet() {
         </div>
       </Heading>
       
-      { currentIndex === 0 ? null : (<>
+      {currentIndex && currentIndex === 0 ? <></> : (<>
         <KeyContainer>
           {/* {addresses.map((p, index) => 
           <KeyBox key={index}>
@@ -139,12 +254,13 @@ function EthWallet() {
           )} */}
 
           <GridContainer>
-            {publicKeys.map((p, index) => 
+          {publicKeys.map((p, index) => 
               <WalletBox
                 key={index}
                 walletNo = {index+1}
                 publicKey = {p}
-                privateKey="ndcsuyhc89qwnr0238dnm20389dij2309fm3w80"
+                privateKey={privateKeys[index]}
+                onDelete = {handleDeleteEthWallet}
               />
             )}
             
@@ -246,7 +362,7 @@ const TopContainer = styled.div`
     cursor: pointer;
 
     span{
-      margin-inline:10px;
+      margin-inline:10px; 
     }
     &:hover{
       background-color:rgba(255,255,255,.05);

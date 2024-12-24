@@ -5,13 +5,7 @@ import { genM } from '../util/mFunctions';
 import { mnemonicToSeed } from "bip39";
 import { useDispatch } from "react-redux";
 import { saveMnemonicAndSeed } from '../RTK/features/utilSlice';
-
-import {
-    AddSolWallet, 
-    AddEthWallet,
-    
-  } from "../components/cIndex"
-  import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
   
 
 function LandingPage() {
@@ -22,19 +16,6 @@ function LandingPage() {
   const [seed, setSeed] = useState("")
   const [walletType, setWalletType] = useState("")
 
-
-  // const [wallet,setWallet] = useState("AddSolWallet");
-
-  // const walletComponents = {
-  //   AddEthWallet: AddEthWallet,
-  //   AddSolWallet: AddSolWallet,
-  // };
-
-  // const SelectedWalletComponent = wallet ? walletComponents[wallet] : null;
-
- 
- 
-  
   useEffect(() => {
     if (mnemonic && seed) {
       // Dispatch the thunk instead of individual actions

@@ -84,15 +84,45 @@ function SolWallet() {
   };  
 
   const onClickAddWalletFunction = async () => {
-    
-    if (deletedWallets.length > 0) {
- 
-      const restoredWallet = deletedWallets[deletedWallets.length - 1];
-      setPublicKeys(prevKeys => [...prevKeys, restoredWallet.publicKey]);
-      setPrivateKeys(prevKeys => [...prevKeys, restoredWallet.privateKey]);
+    try{
+      if (deletedWallets.length > 0) {
       
-      toast.success(`Restored Wallet successfully!`,
-        {
+        const restoredWallet = deletedWallets[deletedWallets.length - 1];
+        setPublicKeys(prevKeys => [...prevKeys, restoredWallet.publicKey]);
+        setPrivateKeys(prevKeys => [...prevKeys, restoredWallet.privateKey]);
+
+        toast.success(`Restored Wallet successfully!`,
+          {
+            style: {
+              border: '1px solid #ffffff',
+              padding: '16px',
+              color: '#000000',
+            },
+            iconTheme: {
+              primary: '#000000',
+              secondary: '#FFFAEE',
+            }
+          }
+        );
+
+        // Remove the restored wallet from deleted wallets
+        setDeletedWallets(prev => prev.slice(0, -1));
+      } else {
+
+        const path = `m/44'/501'/${currentIndex}'/0'`;
+        const derivedSeed = derivePath(path, seed.toString("hex")).key;
+        const secret = nacl.sign.keyPair.fromSeed(derivedSeed).secretKey;
+        const keypair = Keypair.fromSecretKey(secret);
+        // console.log("sol secret ---> \n",keypair.secretKey);
+        // console.log("sol secret 2 ---> \n",bs58.encode(keypair.secretKey));
+
+        const bs58EncodedPrivateKey = bs58.encode(keypair.secretKey);
+        
+        setCurrentIndex(prevIndex => prevIndex + 1);
+        setPublicKeys(prevKeys => [...prevKeys, keypair.publicKey.toBase58()]);
+        setPrivateKeys(prevKeys => [...prevKeys, bs58EncodedPrivateKey]);
+        
+        toast.success('Added new Wallet', {
           style: {
             border: '1px solid #ffffff',
             padding: '16px',
@@ -102,37 +132,11 @@ function SolWallet() {
             primary: '#000000',
             secondary: '#FFFAEE',
           }
-        }
-      );
-      
-      // Remove the restored wallet from deleted wallets
-      setDeletedWallets(prev => prev.slice(0, -1));
-    } else {
-
-      const path = `m/44'/501'/${currentIndex}'/0'`;
-      const derivedSeed = derivePath(path, seed.toString("hex")).key;
-      const secret = nacl.sign.keyPair.fromSeed(derivedSeed).secretKey;
-      const keypair = Keypair.fromSecretKey(secret);
-      // console.log("sol secret ---> \n",keypair.secretKey);
-      // console.log("sol secret 2 ---> \n",bs58.encode(keypair.secretKey));
-
-      const bs58EncodedPrivateKey = bs58.encode(keypair.secretKey);
-      
-      setCurrentIndex(prevIndex => prevIndex + 1);
-      setPublicKeys(prevKeys => [...prevKeys, keypair.publicKey.toBase58()]);
-      setPrivateKeys(prevKeys => [...prevKeys, bs58EncodedPrivateKey])
-  
-      toast.success('Added new Wallet', {
-        style: {
-          border: '1px solid #ffffff',
-          padding: '16px',
-          color: '#000000',
-        },
-        iconTheme: {
-          primary: '#000000',
-          secondary: '#FFFAEE',
-        }
-      });
+        });
+      }
+    } catch (error){
+      console.error("Error adding wallet:", error);
+      toast.error("Failed to add wallet");
     }
   }
 
@@ -231,7 +235,7 @@ function SolWallet() {
         </div>
       </Heading>
       
-      { currentIndex === 0 ? null : (<>
+      {currentIndex && currentIndex === 0 ? <></> : (<>
         <KeyContainer>
           <GridContainer>
             {publicKeys.map((p, index) => 
