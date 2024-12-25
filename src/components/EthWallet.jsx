@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
-import { ToastContainer, toast } from 'react-toastify';
+// import { ToastContainer, toast } from 'react-toastify';
+import toast, {Toaster} from 'react-hot-toast';
 import 'react-toastify/dist/ReactToastify.css';
-import WalletBox from "./WalletBox.jsx"
+import WalletBox from "./WalletBox.jsx";
 import Navbar from './Navbar.jsx';
-import { Wallet, HDNodeWallet } from "ethers";
+// import { Wallet, HDNodeWallet } from "ethers";
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ethers } from "ethers";
@@ -62,17 +63,6 @@ function EthWallet() {
   
   const resultArray = splitStringToArray(mnemonic);
   console.log(resultArray)
-
-
-  // const onClickAddWalletFunction = async () => {
-  //   const derivationPath = `m/44'/60'/${currentIndex}'/0'`;
-  //   const hdNode = HDNodeWallet.fromSeed(seed);
-  //   const child = hdNode.derivePath(derivationPath);
-  //   const privateKey = child.privateKey;
-  //   const wallet = new Wallet(privateKey);
-  //   setCurrentIndex(currentIndex + 1);
-  //   setAddresses([...addresses, wallet.address]);
-  // }
 
   const onClickAddEthWalletFunction = async () => {
     try {
@@ -156,7 +146,8 @@ function EthWallet() {
         
     <Container>
       <Navbar/>
-      <ToastContainer position="bottom-right" autoClose={1600} />
+      {/* <ToastContainer position="bottom-right" autoClose={1600} /> */}
+      <Toaster position="bottom-right" reverseOrder={true}/>
       <TopContainer>
       <Top onClick={()=>setDropdownToggle(!dropdownToggle)}>
         <div>
@@ -246,15 +237,9 @@ function EthWallet() {
       
       {currentIndex && currentIndex === 0 ? <></> : (<>
         <KeyContainer>
-          {/* {addresses.map((p, index) => 
-          <KeyBox key={index}>
-              {p}
-              <subWallet publicKey={p}/>
-          </KeyBox>
-          )} */}
-
           <GridContainer>
-          {publicKeys.map((p, index) => 
+          {
+            publicKeys.map((p, index) => 
               <WalletBox
                 key={index}
                 walletNo = {index+1}
@@ -262,15 +247,13 @@ function EthWallet() {
                 privateKey={privateKeys[index]}
                 onDelete = {handleDeleteEthWallet}
               />
-            )}
-            
-           
+            )
+          }
           </GridContainer>
         </KeyContainer>
       </>)
       }
-      
-      
+
     </Container>
   
     </>
